@@ -1,0 +1,11 @@
+[
+  { "label": "Sells by WhatsApp, COD", "query": "site:instagram.com \"order on whatsapp\" \"cod available\"" },
+  { "label": "DM to order, ships India", "query": "site:instagram.com \"dm to order\" \"shipping all over india\"" },
+  { "label": "Handmade, DM to order", "query": "site:instagram.com handmade \"dm to order\" india" },
+  { "label": "Clothing, wa.me in bio", "query": "site:instagram.com kurti \"wa.me\" \"pan india\"" },
+  { "label": "Jewellery, COD", "query": "site:instagram.com jewellery \"cod available\" \"dm\"" },
+  { "label": "Skincare D2C brand", "query": "site:instagram.com skincare brand india \"shop now\" \"link in bio\"" },
+  { "label": "Food and snacks, ships India", "query": "site:instagram.com homemade snacks \"pan india delivery\"" },
+  { "label": "On Dukaan", "query": "site:instagram.com \"mydukaan.io\"" },
+  { "label": "On Shopify (migration)", "query": "site:instagram.com \"myshopify.com\" india" }
+]

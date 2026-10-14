@@ -1,0 +1,11 @@
+{
+  "product": "[your product]",
+  "pitch": "[what it does for sellers, for example: helps Instagram sellers take orders and payments online]",
+  "country": "in",
+  "messages": {
+    "shopify": "Hi {name}, saw your store runs on Shopify. I work on {product}, which {pitch}. Would a quick side-by-side with your current setup help?",
+    "store": "Hi {name}, loved your page. I work on {product}, which {pitch}. Happy to show you how it would look for your store. Interested?",
+    "chat": "Hi {name}, noticed you take orders over {channels}. I work on {product}, which {pitch}. Want me to show you how it would work for your orders?",
+    "default": "Hi {name}, came across your page. I work on {product}, which {pitch}. Want me to show you how it would work for you?"
+  }
+}

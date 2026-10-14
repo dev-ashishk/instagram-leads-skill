@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instagram Leads</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f4f6; --sheet: #fff; --fg: #15181e; --muted: #6b7280; --line: #e5e7eb; --soft: #f6f7f9;
+    --green: #22c55e; --green-ink: #03200f; --green-soft: #e9f9ef; --red: #dc2626; --amber: #b45309;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.45 Geist, system-ui, sans-serif; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  .wrap { max-width: 1400px; margin: 0 auto; padding: 16px; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  h1 { font-size: 22px; font-weight: 700; margin: 0; }
+  h1 small { display: block; font-size: 13px; font-weight: 400; color: var(--muted); }
+  .sheet { background: var(--sheet); border: 1px solid var(--line); border-radius: 16px; padding: 20px; }
+  a.btn { color: inherit; }
+  .btn { height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-weight: 500; white-space: nowrap; }
+  .btn:hover { background: var(--soft); }
+  .btn.primary { background: var(--green); border-color: var(--green); color: var(--green-ink); font-weight: 600; }
+  .btn.primary:hover { filter: brightness(.95); }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .btn:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--green); outline-offset: 1px; }
+  input, select, textarea { height: 36px; border: 1px solid var(--line); border-radius: 8px; padding: 0 10px; background: #fff; }
+  textarea { height: auto; padding: 8px 10px; width: 100%; resize: vertical; }
+  .find { display: grid; grid-template-columns: 220px 1fr 90px auto; gap: 8px; }
+  .find:has(#pages[hidden]) { grid-template-columns: 220px 1fr auto; }
+  .hint { color: var(--muted); font-size: 12px; margin-top: 6px; }
+  .keywarn { background: #fff7ed; border: 1px solid #fed7aa; color: var(--amber); border-radius: 8px; padding: 10px 12px; margin: 12px 0 0; font-size: 13px; }
+  .howto { background: var(--soft); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px; font-size: 13px; }
+  .howto p { margin: 0 0 6px; } .howto p:last-child { margin: 0; }
+  .bm { display: inline-block; padding: 2px 10px; border: 1px dashed var(--green); border-radius: 999px; background: #fff; color: inherit; font-weight: 600; text-decoration: none; cursor: grab; }
+  .import { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; background: var(--green-soft); border: 1px solid var(--green); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
+  .import span { flex: 1 1 260px; }
+  [hidden] { display: none !important; }
+  .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin: 16px 0; }
+  .stat { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; cursor: pointer; background: #fff; text-align: left; }
+  .stat.on { border-color: var(--green); background: var(--green-soft); }
+  .stat b { display: block; font-size: 24px; font-weight: 700; }
+  .stat span { color: var(--muted); font-size: 12px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+  .chip { white-space: nowrap; display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; font-size: 12px; cursor: pointer; background: #fff; }
+  .chip.on { background: var(--green-soft); border-color: var(--green); }
+  .chip .n { color: var(--muted); margin-left: 4px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-weight: 500; color: var(--muted); font-size: 12px; background: var(--soft); padding: 10px 12px; }
+  th:first-child { border-radius: 8px 0 0 8px; } th:last-child { border-radius: 0 8px 8px 0; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr.row { cursor: pointer; } tr.row:hover td { background: #fafbfc; } tr.row.sel td { background: var(--green-soft); }
+  .name { font-weight: 600; } .handle { color: var(--muted); font-size: 12px; }
+  .pill { display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; font-size: 11px; margin: 0 4px 4px 0; white-space: nowrap; }
+  .pill.hot { border-color: #86efac; background: var(--green-soft); }
+  .num { font-variant-numeric: tabular-nums; }
+  .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .layout { display: grid; grid-template-columns: 1fr 380px; gap: 16px; align-items: start; }
+  .panel { border: 1px solid var(--line); border-radius: 12px; padding: 16px; position: sticky; top: 16px; }
+  .panel h2 { font-size: 18px; margin: 0 0 2px; }
+  .panel .bio { background: var(--soft); border-radius: 8px; padding: 10px; font-size: 13px; margin: 12px 0; }
+  .panel label { display: block; font-size: 12px; color: var(--muted); margin: 12px 0 4px; }
+  .panel .acts { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .runs { margin-top: 16px; font-size: 12px; color: var(--muted); }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--fg); color: #fff; padding: 10px 16px; border-radius: 8px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .toast.show { opacity: 1; } .toast.err { background: var(--red); }
+  @media (max-width: 1000px) {
+    .layout { grid-template-columns: 1fr; } .panel { position: static; }
+    .stats { grid-template-columns: repeat(3, 1fr); }
+    .find, .find:has(#pages[hidden]) { grid-template-columns: 1fr; }
+    .hide-sm { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Instagram leads<small>Sellers found through Google search. Instagram itself is never scraped.</small></h1>
+    <a class="btn" href="/api/export.csv" style="display:inline-flex;align-items:center;text-decoration:none">Export CSV</a>
+  </header>
+
+  <div class="sheet">
+    <div id="import" class="import" hidden></div>
+    <div class="howto">
+      <p><b>Three ways to add leads.</b> Ask Claude, for example "find jewellery sellers on Instagram who offer COD". Or search Google yourself and press the bookmarklet on the results page. <span id="keyline"></span></p>
+      <p>Bookmarklet: drag <a class="bm" id="bm" href="#">Send to Instagram Leads</a> to your bookmarks bar.</p>
+    </div>
+
+    <form class="find" id="find">
+      <select id="preset" aria-label="Saved searches"><option value="">Saved searches</option></select>
+      <input id="query" placeholder='site:instagram.com "dm to order" "cod available"' aria-label="Google search">
+      <select id="pages" aria-label="Pages of results">
+        <option value="1">1 page</option><option value="3" selected>3 pages</option><option value="5">5 pages</option><option value="10">10 pages</option>
+      </select>
+      <button class="btn primary" id="go">Find leads</button>
+    </form>
+    <div class="hint" id="hint"></div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="filters">
+      <input id="text" placeholder="Search name, bio or notes" aria-label="Filter leads" style="width:240px">
+      <select id="minf" aria-label="Minimum followers">
+        <option value="0">Any followers</option><option value="1000">1k+</option><option value="5000">5k+</option><option value="20000">20k+</option><option value="100000">100k+</option>
+      </select>
+      <span class="chip" data-contact="email">Has email</span>
+      <span class="chip" data-contact="phone">Has phone</span>
+      <span id="sigchips" style="display:contents"></span>
+    </div>
+
+    <div class="layout">
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Seller</th><th class="num">Followers</th><th>Signals</th><th class="hide-sm">Contact</th><th>Status</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="empty" id="empty" hidden></div>
+      </div>
+      <aside class="panel" id="panel"><div class="empty" style="padding:30px 10px">Pick a seller to see their bio, a suggested message and notes.</div></aside>
+    </div>
+
+    <div class="runs" id="runs"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const SIGNAL = {
+  whatsapp: 'WhatsApp orders', dm_to_order: 'DM to order', cod: 'COD', linktree: 'Link-in-bio page',
+  dukaan: 'On Dukaan', shopify: 'On Shopify', other_store: 'Other store', ships_india: 'Ships across India', has_site: 'Has a website',
+}
+const HOT = new Set(['whatsapp', 'dm_to_order', 'shopify', 'dukaan'])
+const STATUS = { new: 'New', shortlisted: 'Shortlisted', contacted: 'Contacted', replied: 'Replied', won: 'Signed up', not_a_fit: 'Not a fit' }
+let state = { leads: [], runs: [], presets: [] }
+const f = { status: '', sigs: new Set(), contact: new Set(), text: '', minf: 0 }
+let selected = null
+
+const $ = id => document.getElementById(id)
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+const short = n => n == null ? '-' : n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'k' : String(n)
+function toast(msg, err) { const t = $('toast'); t.textContent = msg; t.className = 'toast show' + (err ? ' err' : ''); clearTimeout(t._h); t._h = setTimeout(() => (t.className = 'toast'), 3000) }
+
+async function api(path, opts = {}) {
+  const res = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.message || `Request failed (${res.status})`)
+  return data
+}
+
+// First message, picked by the strongest signal. Templates come from config.json.
+function draft(l) {
+  const s = new Set(l.signals)
+  const m = state.config.messages
+  const key = s.has('shopify') ? 'shopify' : s.has('dukaan') || s.has('other_store') ? 'store' : s.has('whatsapp') || s.has('dm_to_order') ? 'chat' : 'default'
+  const vars = { name: l.name.split(/[|,]/)[0].trim(), product: state.config.product, pitch: state.config.pitch, channels: s.has('whatsapp') ? 'DMs and WhatsApp' : 'DMs' }
+  return (m[key] ?? m.default).replace(/\{(\w+)\}/g, (all, k) => vars[k] ?? all)
+}
+
+function filtered() {
+  const q = f.text.toLowerCase()
+  return state.leads
+    .filter(l => !f.status || l.status === f.status)
+    .filter(l => [...f.sigs].every(s => l.signals.includes(s)))
+    .filter(l => [...f.contact].every(c => l[c]))
+    .filter(l => (l.followers ?? 0) >= f.minf)
+    .filter(l => !q || `${l.name} ${l.handle} ${l.bio} ${l.notes}`.toLowerCase().includes(q))
+    .sort((a, b) => b.signals.filter(s => HOT.has(s)).length - a.signals.filter(s => HOT.has(s)).length || (b.followers ?? 0) - (a.followers ?? 0))
+}
+
+const unset = () => /^\[/.test(state.config.product ?? '[') || /^\[/.test(state.config.pitch ?? '[')
+
+function render() {
+  $('keyline').textContent = state.hasKey
+    ? 'A Serper key is set, so the search box below fetches results directly.'
+    : 'The search box below opens Google with your search. Add a Serper key to fetch results here directly.'
+  $('pages').hidden = !state.hasKey
+  $('go').textContent = state.hasKey ? 'Find leads' : 'Search on Google'
+  $('hint').textContent = state.hasKey ? 'Each page is 10 Google results and costs 1 Serper credit.' : 'Then press the bookmarklet on the Google results page.'
+  const counts = Object.fromEntries(Object.keys(STATUS).map(k => [k, state.leads.filter(l => l.status === k).length]))
+  $('stats').innerHTML = [['', 'All leads', state.leads.length], ...Object.entries(STATUS).filter(([k]) => k !== 'not_a_fit').map(([k, v]) => [k, v, counts[k]])]
+    .map(([k, label, n]) => `<button class="stat ${f.status === k ? 'on' : ''}" data-status="${k}"><b class="num">${n}</b><span>${label}</span></button>`).join('')
+
+  $('sigchips').innerHTML = Object.entries(SIGNAL).map(([k, label]) => {
+    const n = state.leads.filter(l => l.signals.includes(k)).length
+    return n ? `<span class="chip ${f.sigs.has(k) ? 'on' : ''}" data-sig="${k}">${label}<span class="n">${n}</span></span>` : ''
+  }).join('')
+  document.querySelectorAll('[data-contact]').forEach(c => c.classList.toggle('on', f.contact.has(c.dataset.contact)))
+
+  const rows = filtered()
+  $('rows').innerHTML = rows.map(l => `
+    <tr class="row ${selected === l.handle ? 'sel' : ''}" data-handle="${esc(l.handle)}">
+      <td><div class="name">${esc(l.name)}</div><div class="handle">@${esc(l.handle)}</div></td>
+      <td class="num">${short(l.followers)}</td>
+      <td>${l.signals.map(s => `<span class="pill ${HOT.has(s) ? 'hot' : ''}">${esc(SIGNAL[s] ?? s)}</span>`).join('')}</td>
+      <td class="hide-sm">${l.email ? esc(l.email) + '<br>' : ''}${l.phone ? esc(l.phone) : ''}${!l.email && !l.phone ? '<span class="handle">DM only</span>' : ''}</td>
+      <td><select data-setstatus="${esc(l.handle)}" aria-label="Status for ${esc(l.handle)}">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}" ${l.status === k ? 'selected' : ''}>${v}</option>`).join('')}</select></td>
+    </tr>`).join('')
+  const e = $('empty')
+  e.hidden = rows.length > 0
+  e.textContent = state.leads.length ? 'No sellers match these filters.' : 'No leads yet. Ask Claude to find some, or pick a saved search above.'
+
+  const SRC = { serper: 'Serper', claude: 'Claude', bookmarklet: 'bookmarklet', manual: 'import' }
+  $('runs').innerHTML = state.runs.length ? 'Recent searches: ' + state.runs.slice(0, 5).map(r => `${esc(r.query)} (${r.fresh} new of ${r.found}, ${esc(SRC[r.source] ?? 'Serper')})`).join(' &nbsp;/&nbsp; ') : ''
+  renderPanel()
+}
+
+function renderPanel() {
+  const l = state.leads.find(x => x.handle === selected)
+  if (!l) return
+  const msg = draft(l)
+  $('panel').innerHTML = `
+    <h2>${esc(l.name)}</h2>
+    <div class="handle">@${esc(l.handle)} &nbsp; ${short(l.followers)} followers${l.posts ? ` &nbsp; ${short(l.posts)} posts` : ''}</div>
+    <div class="bio">${esc(l.bio) || 'No bio text in the search result.'}</div>
+    ${unset() ? '<div class="keywarn">Set your product name and pitch in <code>~/.instagram-leads/config.json</code> to fill in the message below.</div>' : ''}
+    <div class="acts">
+      <a class="btn" href="${esc(l.url)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;text-decoration:none">Open Instagram</a>
+      ${l.phone ? `<a class="btn" href="https://wa.me/${esc(l.phone.replace(/^\+?91?/, '91'))}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;text-decoration:none">WhatsApp</a>` : ''}
+      ${l.email ? `<a class="btn" href="mailto:${esc(l.email)}" style="display:inline-flex;align-items:center;text-decoration:none">Email</a>` : ''}
+    </div>
+    <label for="msg">Suggested first message</label>
+    <textarea id="msg" rows="7">${esc(msg)}</textarea>
+    <div class="acts"><button class="btn primary" id="copy">Copy message</button><button class="btn" id="contacted">Mark as contacted</button></div>
+    <label for="notes">Notes</label>
+    <textarea id="notes" rows="3" placeholder="What they said, follow-up date">${esc(l.notes)}</textarea>
+    <div class="acts"><button class="btn" id="savenotes">Save notes</button></div>
+    <div class="hint">Found by: ${esc(l.query)}</div>`
+  $('copy').onclick = async () => { try { await navigator.clipboard.writeText($('msg').value); toast('Message copied') } catch { toast('Could not copy. Select the text and copy it.', true) } }
+  $('contacted').onclick = () => update(l.handle, { status: 'contacted' }, 'Marked as contacted')
+  $('savenotes').onclick = () => update(l.handle, { notes: $('notes').value }, 'Notes saved')
+}
+
+async function update(handle, patch, okMsg) {
+  try {
+    const lead = await api(`/api/leads/${handle}`, { method: 'PATCH', body: JSON.stringify(patch) })
+    state.leads = state.leads.map(l => (l.handle === handle ? lead : l))
+    toast(okMsg); render()
+  } catch (e) { toast(e.message || 'Could not save. Try again.', true) }
+}
+
+async function refresh() {
+  try { state = await api('/api/state') } catch (e) { toast(e.message, true); return }
+  if ($('preset').options.length === 1) $('preset').innerHTML += state.presets.map((p, i) => `<option value="${i}">${esc(p.label)}</option>`).join('')
+  render()
+}
+
+$('preset').onchange = e => { const p = state.presets[e.target.value]; if (p) $('query').value = p.query }
+$('find').onsubmit = async e => {
+  e.preventDefault()
+  if (!state.hasKey) {
+    const q = $('query').value.trim()
+    if (!q) return toast('Write a search first.', true)
+    window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}&gl=${encodeURIComponent(state.config.country ?? 'in')}`, '_blank', 'noopener')
+    return
+  }
+  const go = $('go'); go.disabled = true; go.textContent = 'Searching...'
+  try {
+    const r = await api('/api/discover', { method: 'POST', body: JSON.stringify({ query: $('query').value, pages: $('pages').value }) })
+    toast(`Found ${r.found} sellers, ${r.fresh} new. Used ${r.credits} credits.`)
+    await refresh()
+  } catch (err) { toast(err.message || 'Search failed. Try again.', true) }
+  go.disabled = false; go.textContent = 'Find leads'
+}
+document.addEventListener('click', e => {
+  const st = e.target.closest('[data-status]'); if (st) { f.status = st.dataset.status; return render() }
+  const sg = e.target.closest('[data-sig]'); if (sg) { f.sigs.has(sg.dataset.sig) ? f.sigs.delete(sg.dataset.sig) : f.sigs.add(sg.dataset.sig); return render() }
+  const ct = e.target.closest('[data-contact]'); if (ct) { f.contact.has(ct.dataset.contact) ? f.contact.delete(ct.dataset.contact) : f.contact.add(ct.dataset.contact); return render() }
+  const row = e.target.closest('tr.row'); if (row && !e.target.closest('select')) { selected = row.dataset.handle; render() }
+})
+document.addEventListener('change', e => { const h = e.target.dataset.setstatus; if (h) update(h, { status: e.target.value }, `Status set to ${STATUS[e.target.value]}`) })
+$('text').oninput = e => { f.text = e.target.value; render() }
+$('minf').onchange = e => { f.minf = Number(e.target.value); render() }
+// Runs on a Google results page: collects Instagram results and opens them here at #import=.
+function grab() {
+  const out = [], seen = new Set()
+  for (const a of document.querySelectorAll('a[href*="instagram.com"]')) {
+    const h3 = a.querySelector('h3')
+    if (!h3) continue
+    let link = a.href
+    try { const u = new URL(link); link = u.searchParams.get('q') || u.searchParams.get('url') || link } catch (e) {}
+    if (seen.has(link)) continue
+    seen.add(link)
+    let box = a
+    while (box.parentElement && !['rso', 'search', 'center_col'].includes(box.parentElement.id) && box.parentElement.querySelectorAll('h3').length === 1) box = box.parentElement
+    let snippet = box.innerText.replace(h3.innerText, '')
+    for (const c of box.querySelectorAll('cite')) snippet = snippet.replace(c.innerText, '')
+    out.push({ link, title: h3.innerText, snippet: snippet.replace(/\s+/g, ' ').trim().slice(0, 1500) })
+  }
+  if (!out.length) return alert('No Instagram profiles on this page. Search Google with site:instagram.com first.')
+  const to = '__ORIGIN__/#import=' + encodeURIComponent(JSON.stringify({ query: new URLSearchParams(location.search).get('q') || '', results: out }))
+  window.open(to, '_blank') || (location.href = to)
+}
+$('bm').href = 'javascript:' + encodeURIComponent('(' + grab.toString().replace('__ORIGIN__', location.origin) + ')()')
+$('bm').onclick = e => { e.preventDefault(); toast('Drag this button to your bookmarks bar, then press it on a Google results page.') }
+
+// Results sent by the bookmarklet wait for a click before they are saved.
+function showImport() {
+  if (!location.hash.startsWith('#import=')) return
+  let data
+  try { data = JSON.parse(decodeURIComponent(location.hash.slice(8))) } catch (e) { return toast('Could not read the results from Google.', true) }
+  const n = Array.isArray(data.results) ? data.results.length : 0
+  const box = $('import')
+  box.innerHTML = `<span>${n} Instagram results from Google${data.query ? ` for <b>${esc(data.query)}</b>` : ''}.</span><button class="btn primary" id="imp">Save to leads</button><button class="btn" id="skip">Discard</button>`
+  box.hidden = false
+  const done = () => { box.hidden = true; history.replaceState(null, '', '/') }
+  $('skip').onclick = () => { done(); toast('Results discarded') }
+  $('imp').onclick = async () => {
+    try {
+      const r = await api('/api/import', { method: 'POST', body: JSON.stringify({ query: data.query, results: data.results, source: 'bookmarklet' }) })
+      done(); toast(`Saved ${r.found} sellers, ${r.fresh} new.`); refresh()
+    } catch (err) { toast(err.message || 'Could not save the results. Try again.', true) }
+  }
+}
+window.addEventListener('hashchange', showImport)
+refresh().then(showImport)
+</script>
+</body>
+</html>
