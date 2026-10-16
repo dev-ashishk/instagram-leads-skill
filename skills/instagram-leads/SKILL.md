@@ -1,6 +1,6 @@
 ---
 name: instagram-leads
-description: Find small businesses selling on Instagram (by default Indian sellers who take orders over DMs or WhatsApp, or run on Shopify or Dukaan) from public Google results, review them in a local page and draft first messages. Never scrapes Instagram. Use when asked to find Instagram leads, prospect Instagram sellers, run or tune lead searches, review or shortlist leads, or draft outreach messages for them.
+description: Find business leads on Instagram from public Google results (by default Indian online shops that take orders over DMs or WhatsApp, or run on Shopify or Dukaan, but any business a search can describe), review them in a local page and draft first messages. Never scrapes Instagram. Use when asked to find Instagram leads, prospect businesses on Instagram, run or tune lead searches, review or shortlist leads, or draft outreach messages for them.
 ---
 
 # Instagram lead finder
@@ -30,7 +30,7 @@ open http://localhost:5600   # xdg-open on Linux
 mkdir -p ~/.instagram-leads && cp tool/config.json ~/.instagram-leads/config.json
 ```
 
-Set `product` to the name and `pitch` to a clause that completes "I work on {product}, which ...", for example "helps Instagram sellers take orders and payments online". Change `country` if the user targets sellers outside India.
+Set `product` to the name and `pitch` to a clause that completes "I work on {product}, which ...", for example "helps Instagram businesses take orders and payments online". Change `country` if the user targets leads outside India.
 
 Stop the server when the work is done: `kill $(lsof -tiTCP:5600 -sTCP:LISTEN)`.
 
@@ -68,7 +68,7 @@ Combine a category (kurti, jewellery, candles, skincare, snacks) with a selling 
 
 - whatsapp, dm_to_order: sells by chat.
 - shopify, dukaan, other_store, linktree, has_site: what storefront they use today.
-- cod, ships_india: active seller shipping nationally.
+- cod, ships_india: active business shipping nationally.
 
 The suggested message is picked from `config.json` by the strongest signal: `shopify`, then `store` (Dukaan or another store), then `chat`, then `default`. Templates can use `{name}`, `{product}`, `{pitch}` and `{channels}`.
 
@@ -77,4 +77,4 @@ The suggested message is picked from `config.json` by the strongest signal: `sho
 - Never scrape instagram.com or facebook.com, never open profiles in an automated browser, and never automate logins or DMs. It breaks Meta's terms and gets accounts banned.
 - Never automate Google searches in a browser. Use the web search tool or the user's own searches.
 - A person sends every message: copy the suggested text and DM by hand (about 20 to 30 a day), or email when the bio lists an address. Never send cold WhatsApp template messages.
-- Keep only what the seller published for business: name, handle, bio, business email or phone. When someone says no, set them to not_a_fit and do not contact them again.
+- Keep only what the lead published for business: name, handle, bio, business email or phone. When someone says no, set them to not_a_fit and do not contact them again.

@@ -1,8 +1,8 @@
 {
   "name": "social-leads-finder",
   "displayName": "Social Leads Finder",
-  "version": "0.4.2",
-  "description": "Find small businesses selling on Instagram from public Google results with no API key needed, review them in a local page, and draft first messages. No scraping.",
+  "version": "0.5.0",
+  "description": "Find business leads on Instagram from public Google results, with no API key needed, review them in a local page, and draft first messages. No scraping.",
   "author": {
     "name": "Ashish Kumar"
   },

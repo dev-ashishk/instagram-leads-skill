@@ -1,4 +1,4 @@
-// Instagram lead finder: finds Instagram sellers through Google results, never by scraping Instagram.
+// Instagram lead finder: finds business leads on Instagram through Google results, never by scraping Instagram.
 // Leads arrive two ways: Claude's web search, or the browser bookmarklet on a Google results page.
 // Run: node server.mjs   then open http://localhost:5600
 import { createServer } from 'node:http'
@@ -88,7 +88,7 @@ export function parseResult(r, query) {
   }
 }
 
-// Adds results to the saved leads. Status and notes on known sellers are kept.
+// Adds results to the saved leads. Status and notes on known leads are kept.
 function merge(results, query, source) {
   const db = load()
   let found = 0, fresh = 0

@@ -75,14 +75,14 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>Instagram leads<small>Sellers found through Google search. Instagram itself is never scraped.</small></h1>
+    <h1>Instagram leads<small>Leads found through Google search. Instagram itself is never scraped.</small></h1>
     <a class="btn" href="/api/export.csv" style="display:inline-flex;align-items:center;text-decoration:none">Export CSV</a>
   </header>
 
   <div class="sheet">
     <div id="import" class="import" hidden></div>
     <div class="howto">
-      <p><b>Two ways to add leads.</b> Ask Claude, for example "find jewellery sellers on Instagram who offer COD". Or search Google yourself and press the bookmarklet on the results page. The search box below opens Google with your search.</p>
+      <p><b>Two ways to add leads.</b> Ask Claude, for example "find jewellery brands on Instagram that offer COD". Or search Google yourself and press the bookmarklet on the results page. The search box below opens Google with your search.</p>
       <p>Bookmarklet: drag <a class="bm" id="bm" href="#">Send to Instagram Leads</a> to your bookmarks bar.</p>
     </div>
 
@@ -108,12 +108,12 @@
     <div class="layout">
       <div style="overflow-x:auto">
         <table>
-          <thead><tr><th>Seller</th><th class="num">Followers</th><th>Signals</th><th class="hide-sm">Contact</th><th>Status</th></tr></thead>
+          <thead><tr><th>Lead</th><th class="num">Followers</th><th>Signals</th><th class="hide-sm">Contact</th><th>Status</th></tr></thead>
           <tbody id="rows"></tbody>
         </table>
         <div class="empty" id="empty" hidden></div>
       </div>
-      <aside class="panel" id="panel"><div class="empty" style="padding:30px 10px">Pick a seller to see their bio, a suggested message and notes.</div></aside>
+      <aside class="panel" id="panel"><div class="empty" style="padding:30px 10px">Pick a lead to see their bio, a suggested message and notes.</div></aside>
     </div>
 
     <div class="runs" id="runs"></div>
@@ -188,7 +188,7 @@ function render() {
     </tr>`).join('')
   const e = $('empty')
   e.hidden = rows.length > 0
-  e.textContent = state.leads.length ? 'No sellers match these filters.' : 'No leads yet. Ask Claude to find some, or pick a saved search above.'
+  e.textContent = state.leads.length ? 'No leads match these filters.' : 'No leads yet. Ask Claude to find some, or pick a saved search above.'
 
   const SRC = { claude: 'Claude', bookmarklet: 'bookmarklet', manual: 'import' }
   $('runs').innerHTML = state.runs.length ? 'Recent searches: ' + state.runs.slice(0, 5).map(r => `${esc(r.query)} (${r.fresh} new of ${r.found}, ${esc(SRC[r.source] ?? 'import')})`).join(' &nbsp;/&nbsp; ') : ''
@@ -288,7 +288,7 @@ function showImport() {
   $('imp').onclick = async () => {
     try {
       const r = await api('/api/import', { method: 'POST', body: JSON.stringify({ query: data.query, results: data.results, source: 'bookmarklet' }) })
-      done(); toast(`Saved ${r.found} sellers, ${r.fresh} new.`); refresh()
+      done(); toast(`Saved ${r.found} leads, ${r.fresh} new.`); refresh()
     } catch (err) { toast(err.message || 'Could not save the results. Try again.', true) }
   }
 }
