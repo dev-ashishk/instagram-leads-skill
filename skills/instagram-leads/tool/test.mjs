@@ -1,6 +1,6 @@
 // node test.mjs  - checks the parser on result shapes Google returns for Instagram.
 import assert from 'node:assert/strict'
-import { handleFrom, parseResult, signals, csvCell, allowed } from './server.mjs'
+import { handleFrom, parseResult, signals, csvCell, allowed, whatsappLink } from './server.mjs'
 
 assert.equal(handleFrom('https://www.instagram.com/mitti.and.co/'), 'mitti.and.co')
 assert.equal(handleFrom('https://www.instagram.com/Mitti_Co/p/C1x2y3/'), 'mitti_co')
@@ -26,6 +26,12 @@ assert.deepEqual(signals('shop at brand.myshopify.com'), ['shopify'])
 assert.ok(signals('order at mydukaan.io/brand').includes('dukaan'))
 assert.ok(signals('visit www.brand.in').includes('has_site'))
 assert.equal(parseResult({ link: 'https://www.instagram.com/p/abc/', title: 'x', snippet: '' }, 'q'), null)
+
+// WhatsApp links keep every digit and add 91 only to 10-digit numbers.
+assert.equal(whatsappLink('9876543210'), 'https://wa.me/919876543210')
+assert.equal(whatsappLink('+919812345678'), 'https://wa.me/919812345678')
+assert.equal(whatsappLink('6123456789'), 'https://wa.me/916123456789')
+assert.equal(whatsappLink(null), null)
 
 // Spreadsheet formulas in a bio must not run when the CSV is opened.
 assert.equal(csvCell('=HYPERLINK("x")'), `"'=HYPERLINK(""x"")"`)

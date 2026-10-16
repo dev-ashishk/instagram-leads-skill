@@ -54,6 +54,15 @@ export function signals(text) {
   return s
 }
 
+// wa.me wants the country code and digits only. A 10-digit number is Indian, the format the parser reads.
+export const whatsappLink = phone => {
+  if (!phone) return null
+  const d = phone.replace(/\D/g, '')
+  return 'https://wa.me/' + (d.length === 10 ? '91' + d : d)
+}
+// What the page gets for a lead: the stored fields plus links worked out here, not in the page.
+const view = l => ({ ...l, whatsapp: whatsappLink(l.phone) })
+
 export function parseResult(r, query) {
   const handle = handleFrom(r.link)
   if (!handle) return null
@@ -149,7 +158,7 @@ const server = createServer(async (req, res) => {
     }
     if (req.method === 'GET' && url.pathname === '/api/state') {
       const db = load()
-      return send(res, 200, { leads: Object.values(db.leads), runs: db.runs.slice(0, 20), presets: config('queries.json'), config: config('config.json') })
+      return send(res, 200, { leads: Object.values(db.leads).map(view), runs: db.runs.slice(0, 20), presets: config('queries.json'), config: config('config.json') })
     }
     if (req.method === 'POST' && url.pathname === '/api/import') {
       const { query, results, source = 'manual' } = await body(req)
@@ -169,7 +178,7 @@ const server = createServer(async (req, res) => {
       }
       if (notes !== undefined) lead.notes = String(notes).slice(0, 2000)
       save(db)
-      return send(res, 200, lead)
+      return send(res, 200, view(lead))
     }
     if (req.method === 'GET' && url.pathname === '/api/export.csv') {
       const rows = Object.values(load().leads).map(l => COLS.map(c => csvCell(Array.isArray(l[c]) ? l[c].join(' ') : l[c])).join(','))

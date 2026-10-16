@@ -195,9 +195,6 @@ function render() {
   renderPanel()
 }
 
-// wa.me wants the country code and digits only. A 10-digit number is Indian, the format the parser reads.
-const waNumber = p => { const d = p.replace(/\D/g, ''); return d.length === 10 ? '91' + d : d }
-
 function renderPanel() {
   const l = state.leads.find(x => x.handle === selected)
   if (!l) return
@@ -209,7 +206,7 @@ function renderPanel() {
     ${unset() ? '<div class="keywarn">Set your product name and pitch in <code>~/.instagram-leads/config.json</code> to fill in the message below.</div>' : ''}
     <div class="acts">
       <a class="btn" href="${esc(l.url)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;text-decoration:none">Open Instagram</a>
-      ${l.phone ? '<a class="btn" href="https://wa.me/' + esc(waNumber(l.phone)) + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;text-decoration:none">WhatsApp</a>' : ''}
+      ${l.whatsapp ? '<a class="btn" href="' + esc(l.whatsapp) + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;text-decoration:none">WhatsApp</a>' : ''}
       ${l.email ? `<a class="btn" href="mailto:${esc(l.email)}" style="display:inline-flex;align-items:center;text-decoration:none">Email</a>` : ''}
     </div>
     <label for="msg">Suggested first message</label>
