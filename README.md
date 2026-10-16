@@ -105,7 +105,7 @@ mkdir -p ~/.instagram-leads
 (umask 077; printf '%s' 'YOUR_SERPER_KEY' > ~/.instagram-leads/serper-key)
 ```
 
-Or set `SERPER_API_KEY`. Restart the tool after adding it. Claude then searches through Serper, and the search box on the review page fetches results directly instead of opening Google.
+Restart the tool after adding it. Claude then searches through Serper, and the search box on the review page fetches results directly instead of opening Google.
 
 ## Use the tool on its own
 

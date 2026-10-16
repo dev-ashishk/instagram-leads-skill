@@ -38,7 +38,7 @@ Stop the server when the work is done: `kill $(lsof -tiTCP:5600 -sTCP:LISTEN)`.
 
 No key is needed. Pick the first way that applies:
 
-1. **Serper key present** (`~/.instagram-leads/serper-key` exists or `SERPER_API_KEY` is set): call `/api/discover`. It returns 10 results a page and searches Google in the configured country. One page costs 1 Serper credit. Say the cost before running more than 10 pages in one go.
+1. **Serper key present** (`~/.instagram-leads/serper-key` exists): call `/api/discover`. It returns 10 results a page and searches Google in the configured country. One page costs 1 Serper credit. Say the cost before running more than 10 pages in one go.
 
 ```bash
 curl -s localhost:5600/api/discover -H 'Content-Type: application/json' \

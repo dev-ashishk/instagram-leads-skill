@@ -13,7 +13,7 @@ const DIR = dirname(fileURLToPath(import.meta.url))
 const HOME = process.env.INSTAGRAM_LEADS_HOME ?? join(homedir(), '.instagram-leads')
 const DATA = join(HOME, 'leads.json')
 const PORT = Number(process.env.PORT ?? 5600)
-const SERPER = process.env.SERPER_API_KEY ?? (existsSync(join(HOME, 'serper-key')) ? readFileSync(join(HOME, 'serper-key'), 'utf8').trim() : '')
+const SERPER = existsSync(join(HOME, 'serper-key')) ? readFileSync(join(HOME, 'serper-key'), 'utf8').trim() : ''
 // ~/.instagram-leads/<name> wins over the bundled default.
 const config = name => JSON.parse(readFileSync(existsSync(join(HOME, name)) ? join(HOME, name) : join(DIR, name), 'utf8'))
 const SERPER_URL = process.env.SERPER_URL ?? 'https://google.serper.dev/search' // overridable for offline tests
@@ -157,7 +157,7 @@ const send = (res, code, data, type = 'application/json') => {
 // The page's one inline script is allowed by hash, so injected markup can never run script.
 const PAGE = readFileSync(join(DIR, 'index.html'))
 const SCRIPT_HASH = createHash('sha256').update(String(PAGE).match(/<script>([\s\S]*?)<\/script>/)[1]).digest('base64')
-const CSP = `default-src 'none'; script-src 'sha256-${SCRIPT_HASH}'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'`
+const CSP = `default-src 'none'; script-src 'sha256-${SCRIPT_HASH}'; style-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'`
 
 const STATUSES = ['new', 'shortlisted', 'contacted', 'replied', 'won', 'not_a_fit']
 const SOURCES = ['claude', 'bookmarklet', 'manual']
