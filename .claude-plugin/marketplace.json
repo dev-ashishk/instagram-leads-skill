@@ -1,5 +1,5 @@
 {
-  "name": "instagram-leads-skill",
+  "name": "social-leads-finder",
   "owner": {
     "name": "Ashish Kumar"
   },
@@ -8,7 +8,7 @@
   },
   "plugins": [
     {
-      "name": "instagram-leads",
+      "name": "social-leads-finder",
       "source": "./",
       "description": "Find small businesses selling on Instagram from public Google results with no API key needed, review them in a local page, and draft first messages. No scraping."
     }

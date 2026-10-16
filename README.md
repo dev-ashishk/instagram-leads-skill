@@ -31,10 +31,10 @@ Inside Claude Code:
 
 ```
 /plugin marketplace add dev-ashishk/instagram-leads-skill
-/plugin install instagram-leads@instagram-leads-skill
+/plugin install social-leads-finder@social-leads-finder
 ```
 
-Restart Claude Code after installing. `/plugin marketplace update instagram-leads-skill` fetches new versions.
+Restart Claude Code after installing. `/plugin marketplace update social-leads-finder` fetches new versions.
 
 ### Option 2: Clone and link
 
@@ -64,7 +64,7 @@ Claude recognises the request and loads the skill. You can also call it by name:
 /instagram-leads find kurti sellers who take orders on WhatsApp
 ```
 
-If you installed it as a plugin, the full name is `/instagram-leads:instagram-leads`.
+If you installed it as a plugin, the full name is `/social-leads-finder:instagram-leads`.
 
 ### First run
 
