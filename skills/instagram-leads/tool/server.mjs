@@ -68,7 +68,7 @@ export function parseResult(r, query) {
   return {
     handle,
     name: name || handle,
-    url: `https://www.instagram.com/${handle}/`,
+    url: 'https://www.instagram.com/' + handle + '/',
     bio: snippet,
     followers: followers ? num(followers[1]) : null,
     posts: posts ? num(posts[1]) : null,
@@ -113,7 +113,7 @@ export function allowed(req, port = PORT) {
   if (!ok.includes(req.headers.host)) return false
   if (req.method === 'GET' || req.method === 'HEAD') return true
   const origin = req.headers.origin
-  if (origin && !ok.some(h => origin === `http://${h}`)) return false
+  if (origin && !ok.some(h => origin === 'http://' + h)) return false
   return (req.headers['content-type'] ?? '').startsWith('application/json')
 }
 
@@ -183,5 +183,5 @@ const server = createServer(async (req, res) => {
 })
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  server.listen(PORT, '127.0.0.1', () => console.log(`Lead finder on http://localhost:${PORT}  (data in ${HOME})`))
+  server.listen(PORT, '127.0.0.1', () => console.log('Lead finder on http://localhost:' + PORT + '  (data in ' + HOME + ')'))
 }

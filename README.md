@@ -38,9 +38,9 @@ Restart Claude Code after installing. `/plugin marketplace update social-leads-f
 ### Option 2: Clone and link
 
 ```bash
-git clone https://github.com/dev-ashishk/instagram-leads-skill.git
+git clone https://github.com/dev-ashishk/instagram-leads-skill.git ~/instagram-leads-skill
 mkdir -p ~/.claude/skills
-ln -s "$PWD/instagram-leads-skill/skills/instagram-leads" ~/.claude/skills/instagram-leads
+ln -s ~/instagram-leads-skill/skills/instagram-leads ~/.claude/skills/instagram-leads
 ```
 
 `git pull` in the clone updates the skill.
