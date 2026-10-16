@@ -1,5 +1,5 @@
 // Instagram lead finder: finds Instagram sellers through Google results, never by scraping Instagram.
-// Leads arrive three ways: Claude's web search, the browser bookmarklet, or Serper (optional key).
+// Leads arrive two ways: Claude's web search, or the browser bookmarklet on a Google results page.
 // Run: node server.mjs   then open http://localhost:5600
 import { createServer } from 'node:http'
 import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync } from 'node:fs'
@@ -13,10 +13,8 @@ const DIR = dirname(fileURLToPath(import.meta.url))
 const HOME = process.env.INSTAGRAM_LEADS_HOME ?? join(homedir(), '.instagram-leads')
 const DATA = join(HOME, 'leads.json')
 const PORT = Number(process.env.PORT ?? 5600)
-const SERPER = existsSync(join(HOME, 'serper-key')) ? readFileSync(join(HOME, 'serper-key'), 'utf8').trim() : ''
 // ~/.instagram-leads/<name> wins over the bundled default.
 const config = name => JSON.parse(readFileSync(existsSync(join(HOME, name)) ? join(HOME, name) : join(DIR, name), 'utf8'))
-const SERPER_URL = process.env.SERPER_URL ?? 'https://google.serper.dev/search' // overridable for offline tests
 
 // ponytail: one JSON file, rewritten whole. Fine to a few thousand leads; move to SQLite past that.
 const load = () => (existsSync(DATA) ? JSON.parse(readFileSync(DATA, 'utf8')) : { leads: {}, runs: [] })
@@ -101,28 +99,6 @@ function merge(results, query, source) {
   return { found, fresh }
 }
 
-async function serper(q, page) {
-  const res = await fetch(SERPER_URL, {
-    method: 'POST',
-    headers: { 'X-API-KEY': SERPER, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ q, gl: config('config.json').country ?? 'in', hl: 'en', num: 10, page }),
-  })
-  if (!res.ok) throw new Error(`Serper ${res.status}: ${(await res.text()).slice(0, 200)}`)
-  return (await res.json()).organic ?? []
-}
-
-async function discover(query, pages) {
-  const all = []
-  let used = 0
-  for (let page = 1; page <= pages; page++) {
-    const results = await serper(query, page)
-    used++
-    if (!results.length) break
-    all.push(...results)
-  }
-  return { ...merge(all, query, 'serper'), credits: used }
-}
-
 // Leading = + - @ make spreadsheets run the cell as a formula; a quote disarms it.
 export const csvCell = v => {
   const s = String(v ?? '')
@@ -173,13 +149,7 @@ const server = createServer(async (req, res) => {
     }
     if (req.method === 'GET' && url.pathname === '/api/state') {
       const db = load()
-      return send(res, 200, { leads: Object.values(db.leads), runs: db.runs.slice(0, 20), presets: config('queries.json'), config: config('config.json'), hasKey: Boolean(SERPER) })
-    }
-    if (req.method === 'POST' && url.pathname === '/api/discover') {
-      if (!SERPER) return send(res, 400, { message: 'No Serper key. Ask Claude to search, or use the bookmarklet.' })
-      const { query, pages = 3 } = await body(req)
-      if (!query?.trim()) return send(res, 400, { message: 'Write a search first.' })
-      return send(res, 200, await discover(query.trim(), Math.min(Math.max(Number(pages) || 1, 1), 10)))
+      return send(res, 200, { leads: Object.values(db.leads), runs: db.runs.slice(0, 20), presets: config('queries.json'), config: config('config.json') })
     }
     if (req.method === 'POST' && url.pathname === '/api/import') {
       const { query, results, source = 'manual' } = await body(req)
@@ -213,5 +183,5 @@ const server = createServer(async (req, res) => {
 })
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  server.listen(PORT, '127.0.0.1', () => console.log(`Lead finder on http://localhost:${PORT}  (data in ${HOME}, ${SERPER ? 'Serper key found' : 'no-key mode'})`))
+  server.listen(PORT, '127.0.0.1', () => console.log(`Lead finder on http://localhost:${PORT}  (data in ${HOME})`))
 }

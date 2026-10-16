@@ -26,8 +26,7 @@
   .btn:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--green); outline-offset: 1px; }
   input, select, textarea { height: 36px; border: 1px solid var(--line); border-radius: 8px; padding: 0 10px; background: #fff; }
   textarea { height: auto; padding: 8px 10px; width: 100%; resize: vertical; }
-  .find { display: grid; grid-template-columns: 220px 1fr 90px auto; gap: 8px; }
-  .find:has(#pages[hidden]) { grid-template-columns: 220px 1fr auto; }
+  .find { display: grid; grid-template-columns: 220px 1fr auto; gap: 8px; }
   .hint { color: var(--muted); font-size: 12px; margin-top: 6px; }
   .keywarn { background: #fff7ed; border: 1px solid #fed7aa; color: var(--amber); border-radius: 8px; padding: 10px 12px; margin: 12px 0 0; font-size: 13px; }
   .howto { background: var(--soft); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px; font-size: 13px; }
@@ -67,7 +66,7 @@
   @media (max-width: 1000px) {
     .layout { grid-template-columns: 1fr; } .panel { position: static; }
     .stats { grid-template-columns: repeat(3, 1fr); }
-    .find, .find:has(#pages[hidden]) { grid-template-columns: 1fr; }
+    .find { grid-template-columns: 1fr; }
     .hide-sm { display: none; }
   }
   @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
@@ -83,19 +82,16 @@
   <div class="sheet">
     <div id="import" class="import" hidden></div>
     <div class="howto">
-      <p><b>Three ways to add leads.</b> Ask Claude, for example "find jewellery sellers on Instagram who offer COD". Or search Google yourself and press the bookmarklet on the results page. <span id="keyline"></span></p>
+      <p><b>Two ways to add leads.</b> Ask Claude, for example "find jewellery sellers on Instagram who offer COD". Or search Google yourself and press the bookmarklet on the results page. The search box below opens Google with your search.</p>
       <p>Bookmarklet: drag <a class="bm" id="bm" href="#">Send to Instagram Leads</a> to your bookmarks bar.</p>
     </div>
 
     <form class="find" id="find">
       <select id="preset" aria-label="Saved searches"><option value="">Saved searches</option></select>
       <input id="query" placeholder='site:instagram.com "dm to order" "cod available"' aria-label="Google search">
-      <select id="pages" aria-label="Pages of results">
-        <option value="1">1 page</option><option value="3" selected>3 pages</option><option value="5">5 pages</option><option value="10">10 pages</option>
-      </select>
-      <button class="btn primary" id="go">Find leads</button>
+      <button class="btn primary" id="go">Search on Google</button>
     </form>
-    <div class="hint" id="hint"></div>
+    <div class="hint">Then press the bookmarklet on the Google results page.</div>
 
     <div class="stats" id="stats"></div>
 
@@ -171,12 +167,6 @@ function filtered() {
 const unset = () => /^\[/.test(state.config.product ?? '[') || /^\[/.test(state.config.pitch ?? '[')
 
 function render() {
-  $('keyline').textContent = state.hasKey
-    ? 'A Serper key is set, so the search box below fetches results directly.'
-    : 'The search box below opens Google with your search. Add a Serper key to fetch results here directly.'
-  $('pages').hidden = !state.hasKey
-  $('go').textContent = state.hasKey ? 'Find leads' : 'Search on Google'
-  $('hint').textContent = state.hasKey ? 'Each page is 10 Google results and costs 1 Serper credit.' : 'Then press the bookmarklet on the Google results page.'
   const counts = Object.fromEntries(Object.keys(STATUS).map(k => [k, state.leads.filter(l => l.status === k).length]))
   $('stats').innerHTML = [['', 'All leads', state.leads.length], ...Object.entries(STATUS).filter(([k]) => k !== 'not_a_fit').map(([k, v]) => [k, v, counts[k]])]
     .map(([k, label, n]) => `<button class="stat ${f.status === k ? 'on' : ''}" data-status="${k}"><b class="num">${n}</b><span>${label}</span></button>`).join('')
@@ -200,8 +190,8 @@ function render() {
   e.hidden = rows.length > 0
   e.textContent = state.leads.length ? 'No sellers match these filters.' : 'No leads yet. Ask Claude to find some, or pick a saved search above.'
 
-  const SRC = { serper: 'Serper', claude: 'Claude', bookmarklet: 'bookmarklet', manual: 'import' }
-  $('runs').innerHTML = state.runs.length ? 'Recent searches: ' + state.runs.slice(0, 5).map(r => `${esc(r.query)} (${r.fresh} new of ${r.found}, ${esc(SRC[r.source] ?? 'Serper')})`).join(' &nbsp;/&nbsp; ') : ''
+  const SRC = { claude: 'Claude', bookmarklet: 'bookmarklet', manual: 'import' }
+  $('runs').innerHTML = state.runs.length ? 'Recent searches: ' + state.runs.slice(0, 5).map(r => `${esc(r.query)} (${r.fresh} new of ${r.found}, ${esc(SRC[r.source] ?? 'import')})`).join(' &nbsp;/&nbsp; ') : ''
   renderPanel()
 }
 
@@ -248,19 +238,9 @@ async function refresh() {
 $('preset').onchange = e => { const p = state.presets[e.target.value]; if (p) $('query').value = p.query }
 $('find').onsubmit = async e => {
   e.preventDefault()
-  if (!state.hasKey) {
-    const q = $('query').value.trim()
-    if (!q) return toast('Write a search first.', true)
-    window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}&gl=${encodeURIComponent(state.config.country ?? 'in')}`, '_blank', 'noopener')
-    return
-  }
-  const go = $('go'); go.disabled = true; go.textContent = 'Searching...'
-  try {
-    const r = await api('/api/discover', { method: 'POST', body: JSON.stringify({ query: $('query').value, pages: $('pages').value }) })
-    toast(`Found ${r.found} sellers, ${r.fresh} new. Used ${r.credits} credits.`)
-    await refresh()
-  } catch (err) { toast(err.message || 'Search failed. Try again.', true) }
-  go.disabled = false; go.textContent = 'Find leads'
+  const q = $('query').value.trim()
+  if (!q) return toast('Write a search first.', true)
+  window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}&gl=${encodeURIComponent(state.config.country ?? 'in')}`, '_blank', 'noopener')
 }
 document.addEventListener('click', e => {
   const st = e.target.closest('[data-status]'); if (st) { f.status = st.dataset.status; return render() }

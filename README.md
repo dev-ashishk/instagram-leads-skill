@@ -10,13 +10,12 @@ The defaults target Indian sellers. Change the country, searches and messages in
 
 ## How it finds leads
 
-| Way | Key needed | How it works | Results |
-|---|---|---|---|
-| Ask Claude (default) | No | Claude searches the web for Instagram profiles and saves what it finds | A few profiles per search, so Claude runs several searches |
-| Bookmarklet | No | You search Google yourself and press a bookmark on the results page | Everything on the results page you are looking at |
-| Serper | [Serper](https://serper.dev) key | The tool fetches Google results itself, 10 per page | The most results, searched from your chosen country |
+| Way | How it works | Results |
+|---|---|---|
+| Ask Claude (default) | Claude searches the web for Instagram profiles and saves what it finds | A few profiles per search, so Claude runs several searches |
+| Bookmarklet | You search Google yourself and press a bookmark on the results page | Everything on the results page you are looking at, including follower counts |
 
-All three read public search results, and none of them open Instagram.
+Both read public search results, and neither opens Instagram.
 
 ## Requirements
 
@@ -96,24 +95,13 @@ The bookmarklet sends the Instagram results from a Google results page to the to
 
 Press it once for each results page you want. It only reads the page you are looking at, and it works only while the tool is running.
 
-## Add a Serper key (optional)
-
-A key lets the tool fetch Google results itself, 10 per page, searched from the country in your config. Serper's free tier gives 2,500 searches and needs no card.
-
-```bash
-mkdir -p ~/.instagram-leads
-(umask 077; printf '%s' 'YOUR_SERPER_KEY' > ~/.instagram-leads/serper-key)
-```
-
-Restart the tool after adding it. Claude then searches through Serper, and the search box on the review page fetches results directly instead of opening Google.
-
 ## Use the tool on its own
 
 ```bash
 node skills/instagram-leads/tool/server.mjs
 ```
 
-Open http://localhost:5600 and add leads with the bookmarklet, or with the search box if you have a key. Then:
+Open http://localhost:5600 and add leads with the bookmarklet. Then:
 
 1. Filter by signal, follower count, or whether the seller lists an email or phone.
 2. Click a seller to see their bio and a suggested first message. Copy it, edit it and send it yourself.
@@ -126,10 +114,6 @@ The same actions are available over HTTP:
 # Save search results you collected yourself (each needs link, title, snippet)
 curl -s localhost:5600/api/import -H 'Content-Type: application/json' \
   -d '{"source":"manual","query":"kurti cod","results":[{"link":"https://www.instagram.com/<handle>/","title":"...","snippet":"..."}]}'
-
-# Search through Serper (needs a key): each page is 10 results and 1 credit
-curl -s localhost:5600/api/discover -H 'Content-Type: application/json' \
-  -d '{"query":"site:instagram.com \"dm to order\" \"cod available\"","pages":3}'
 
 # All leads, recent searches and settings
 curl -s localhost:5600/api/state
@@ -146,14 +130,13 @@ Set `PORT` to run on a port other than 5600. The bookmarklet uses the port the p
 
 ## What it saves and where
 
-Each search goes to the service that runs it: Claude's web search, Google in your browser, or Serper. Everything else stays on your machine, in `~/.instagram-leads/` (or the folder in `INSTAGRAM_LEADS_HOME`):
+Each search goes to the service that runs it: Claude's web search, or Google in your browser. The review page itself makes no outside requests. Everything else stays on your machine, in `~/.instagram-leads/` (or the folder in `INSTAGRAM_LEADS_HOME`):
 
 | File | What it holds |
 |---|---|
 | `leads.json` | Every seller found, with your statuses and notes |
 | `config.json` | Your product, pitch, country and messages |
 | `queries.json` | Optional. Your own saved searches |
-| `serper-key` | Optional. Your Serper API key |
 
 Searching again updates sellers you already have and keeps your statuses and notes. Updating or reinstalling the skill does not touch this folder.
 
@@ -169,7 +152,7 @@ cp skills/instagram-leads/tool/config.json skills/instagram-leads/tool/queries.j
 `config.json` holds:
 - `product`: your product's name.
 - `pitch`: a clause that finishes "I work on {product}, which ...".
-- `country`: the Google country code for Serper and the search box (`in`, `us`, `gb` and so on).
+- `country`: the Google country code the search box uses (`in`, `us`, `gb` and so on).
 - `messages`: four templates, picked by the seller's strongest signal: `shopify`, `store` (Dukaan or another store), `chat` (DMs or WhatsApp), and `default`. Templates can use `{name}`, `{product}`, `{pitch}` and `{channels}`.
 
 `queries.json` is a list of saved searches, each with a `label` and a `query`.
